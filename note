@@ -1,0 +1,3 @@
+execve(“/bin/sh”)
+
+move rdi [pointer to "/bin/sh” string]
