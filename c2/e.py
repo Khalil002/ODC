@@ -4,6 +4,8 @@ from pwn import *
 #syscall
 
 COMMANDS = """
+b main
+continue
 b cs_free
 continue
 finish
