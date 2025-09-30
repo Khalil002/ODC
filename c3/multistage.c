@@ -19,3 +19,8 @@ int main(){
   asm("jmp %rax");
 
 }
+
+//rax must be set to 59
+//rdi must be set to point to /bin/sh
+//rsi must be set to 0
+//rdx is already at 0

