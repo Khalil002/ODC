@@ -1,6 +1,8 @@
 from pwn import *
 
 COMMANDS = """
+b 0x4011f1
+c
 """
 
 shellcode = b"\x50"
