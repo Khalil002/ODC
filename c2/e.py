@@ -1,6 +1,14 @@
 from pwn import *
 
 COMMANDS = """
+b cs_free
+continue
+finish
+next
+next
+si
+si
+si
 """
 shellcode = b"\x31\xF6\xC3"
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
