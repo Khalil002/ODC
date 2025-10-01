@@ -25,5 +25,4 @@ p.interactive()
 
 #execve("/bin/sh\0", NULL, NULL)
 #0x0068732f6e69622f
-Hello Mr.H\xb8/bin/sh
 
