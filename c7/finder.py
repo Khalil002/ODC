@@ -33,7 +33,8 @@ code = """
 # Basic usage
 machine = asm(code)
 print(machine)               # raw bytes (type: bytes)
-print(machine.hex())         # readable hex
+escaped = '"' + ''.join(f'\\x{b:02X}' for b in machine) + '"'
+print(escaped)
 
 os.environ["PYTHONUNBUFFERED"] = "1"
 result = subprocess.run(['python3', 'wrapper.py'], 
