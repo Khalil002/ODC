@@ -111,16 +111,4 @@ def brute_force_flag():
         log.info("success!")
     return flag
 
-
-# Basic usage
-machine = asm(code)
-stringLiteral = ''.join(f'\\x{b:02X}' for b in machine)
-print(machine) # raw bytes (type: bytes)
-print(stringLiteral) # string literal
-
-os.environ["PYTHONUNBUFFERED"] = "1"
-result = subprocess.run(['python3', 'wrapper.py'], 
-                        env={'PYTHONUNBUFFERED': '1'},
-                        capture_output=True, text=True)
-time_str = result.stdout.split("Time: ")[1].strip()
-time_val = float(time_str)
+brute_force_flag()
