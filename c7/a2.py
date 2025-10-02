@@ -10,7 +10,7 @@ p = process(['python3', 'wrapper.py'], env=env)
 p.send(shellcode)
 
 # Wait for the process to finish and get all output
-output = p.recvall()
+output = p.recv(53)
 
 # Get the return code
 return_code = p.wait()
