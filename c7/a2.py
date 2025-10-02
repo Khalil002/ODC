@@ -14,7 +14,7 @@ def utf8len(s):
 p = process(['python3', 'wrapper.py'], env=env)
 p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
 p.recv(utf8len("Shellcode: "))
-p.send(pad_payload(shellcode))
+p.send(pad_payload(shellcode, 1024))
 time_str = p.recvall()
 print(time_str)
 print(type(time_str))
