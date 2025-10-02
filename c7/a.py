@@ -8,6 +8,6 @@ result = subprocess.run(['python3', 'wrapper.py'],
 print("Return code:", result.returncode)
 print("Output:", result.stdout)
 print("Errors:", result.stderr)
-time_str = result.output.split("Time: ")[1].strip()
+time_str = result.stdout.split("Time: ")[1].strip()
 time_val = float(time_str)
 print(f"Time: {time_val}")
