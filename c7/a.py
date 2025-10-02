@@ -8,6 +8,7 @@ result = subprocess.run(['python3', 'wrapper.py'],
 print("Return code:", result.returncode)
 print("Output:", result.stdout)
 print("Errors:", result.stderr)
+print(type(result.stdout))
 time_str = result.stdout.split("Time: ")
 print(time_str)
 #time_str = time_str[1].strip()
