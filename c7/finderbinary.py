@@ -65,7 +65,7 @@ def create_timing_shellcode(position, character):
 def binary_search():
     flag = ""
     position = 0
-    charset = sorted(string.printable)
+    charset = "".join(sorted(string.printable))
     env = {'PYTHONUNBUFFERED': '1'}
     failure = False
     over = False
