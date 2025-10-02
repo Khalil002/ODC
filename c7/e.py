@@ -1,8 +1,6 @@
 from pwn import *
 
 COMMANDS = """
-b*0x40116e
-continue
 """
 
 context.arch = 'amd64'
