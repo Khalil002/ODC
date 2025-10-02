@@ -5,6 +5,8 @@ b*0x40116e
 continue
 """
 
+context.arch = 'amd64'
+
 def create_timing_shellcode(position, character):
     shellcode = asm(f'''
         /* Open /challenge/flag */
