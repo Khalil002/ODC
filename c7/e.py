@@ -64,9 +64,9 @@ print(sys.argv[0])
 print(sys.argv[1])
 print(type(sys.argv[1]))
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
-if sys.argv[0] == "GDB":
+if args.GDB:
     p = gdb.debug("./benchmarking_service", gdbscript=COMMANDS)
-elif sys.argv[0] == "REMOTE":
+elif args.REMOTE:
     p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
 else:
     p = process("./benchmarking_service")
