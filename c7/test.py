@@ -1,4 +1,11 @@
-import sys, time
+import sys, time, string
 sys.stdout.write("one\n")
-time.sleep(5)
+print(string.printable)
+sorted_chars = "".join(sorted(string.printable))
+print(sorted(string.printable))
+print(type(sorted(string.printable)))
+result = "".join(sorted_chars)
+print(ord(result[0]))
+print(ord(sorted(string.printable)[0]))
+print(result)
 sys.stdout.write("two\n")

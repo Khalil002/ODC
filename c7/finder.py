@@ -52,7 +52,7 @@ def create_timing_shellcode(position, character):
     return shellcode.ljust(1024, b'\x90')
 
 def brute_force_flag():
-    flag = ""
+    flag = "flag{1_r341Ly_}"
     position = 0
     charset = string.printable
     #charset = "a IAMTHEFLG"
@@ -118,3 +118,5 @@ def brute_force_flag():
     return flag
 
 brute_force_flag()
+
+#flag{1_r34lLy_h0p3_u_d1d_a_b1n4ry_s34rCh}

