@@ -47,7 +47,7 @@ def create_timing_shellcode(position, character):
     
     return shellcode.ljust(1024, b'\x90')
 
-shellcode = create_timing_shellcode(0, ord("I"))
+shellcode = create_timing_shellcode(0, ord("a"))
 
 #ncat --ssl back-to-shell.training.offensivedefensive.it 8080
 if args.GDB:
