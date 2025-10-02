@@ -99,18 +99,17 @@ def brute_force_flag():
                     p.close()
                 except:
                     pass
-
-            if not found_char:
-                log.warning(f"No char found for position {position}")
-                failure = True
-                over = True
-                break
-                
-            if flag.endswith('}'):
-                log.success(f"Complete: {flag}")
-                failure = False
-                over = True
-                break
+        if not found_char:
+            log.warning(f"No char found for position {position}")
+            failure = True
+            over = True
+            break
+            
+        if flag.endswith('}'):
+            log.success(f"Complete: {flag}")
+            failure = False
+            over = True
+            break
     if failure:
         log.info("failure")
     else:
