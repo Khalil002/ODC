@@ -1,5 +1,6 @@
 from pwn import *
 import time
+import string
 
 context.arch = 'amd64'
 context.log_level = 'info'
