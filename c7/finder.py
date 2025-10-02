@@ -11,7 +11,7 @@ result = subprocess.run(['python3', 'wrapper.py'],
                         capture_output=True, text=True)
 print("Return code:", result.returncode)
 print("Output:", result.stdout)
-time_str = result.output.split("Time: ")[1].strip()
+time_str = result.stdout.split("Time: ")[1].strip()
 time_val = float(time_str)
 print(f"Time: {time_val}")
 print("Errors:", result.stderr)
