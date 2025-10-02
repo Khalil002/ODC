@@ -81,7 +81,7 @@ def brute_force_flag():
                 p.close()
 
                 log.info(f"Char '{character}': {time_val:.3f}s")
-                if time_val > 0.05:
+                if time_val > 1.00:
                     flag += character
                     log.success(f"Found: '{character}' -> {flag}")
                     found_char = True
