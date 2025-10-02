@@ -8,7 +8,7 @@ void init()
   setvbuf(stdout, NULL, _IONBF, 0);
   setvbuf(stdin, NULL, _IONBF, 0);
   setvbuf(stderr, NULL, _IONBF, 0);
-  alarm(3);
+  //alarm(3);
 }
 
 void load_jail()
