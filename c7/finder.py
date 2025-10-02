@@ -54,7 +54,8 @@ def create_timing_shellcode(position, character):
 def brute_force_flag():
     flag = ""
     position = 0
-    charset = string.printable
+    #charset = string.printable
+    charset = "a IAMTHEFLG"
     env = {'PYTHONUNBUFFERED': '1'}
     failure = False
     over = False
